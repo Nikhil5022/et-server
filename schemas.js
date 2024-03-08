@@ -39,6 +39,10 @@ const student = new mongoose.Schema({
     roles: {
         type: Array,
         default: ["student"]
+    },
+    attendance: {
+        type:Array,
+        default:[]
     }
 })
 
@@ -67,7 +71,6 @@ const post = new mongoose.Schema({
         type: Array,
         default: ["student"]
     }
-
 })
 
 const faculty = new mongoose.Schema({
@@ -167,9 +170,69 @@ const admins = new mongoose.Schema({
     },
 })
 
+const bugs= new mongoose.Schema({
+    bug:{
+        type:String,
+        required:true
+    },
+    id:{
+        type:String,
+        required:true
+    },
+    reportedOn:{
+        type:Date,
+        default:new Date().toISOString()
+    },
+    resolved:{
+        type:Boolean,
+        default:false
+    }
+})
+
+
+const events = new mongoose.Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    postedOn: {
+        type: Date,
+        default: new Date().toISOString()
+    },
+    startDate: {
+        type: Date,
+        required: true
+    },
+    endDate: {
+        type: Date,
+        required: true
+    },
+    
+    registrationLink: {
+        type: String,
+        required: true
+    },
+    venue: {
+        type: String,
+        required: true
+    },
+    resourcePersons: {
+        type: Array,
+        default: []
+    }
+
+})
+
+
 
 module.exports = mongoose.model('Student', student);
 module.exports = mongoose.model('Post', post);
 module.exports = mongoose.model('Faculty', faculty);
 module.exports = mongoose.model('Comment', comment);
 module.exports = mongoose.model('Admins', admins);
+module.exports = mongoose.model('Bugs', bugs);
+module.exports = mongoose.model('Events', events);
