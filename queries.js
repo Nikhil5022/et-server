@@ -1,74 +1,106 @@
-const schemas = require('./schemas.js')
-const mongoose = require('mongoose')
-const confidential = require('./confidential.js')
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
+const schemas = require('./schemas.js');
+const mongoose = require('mongoose');
+const confidential = require('./confidential.js');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 mongoose.set("strictQuery", false);
 
-const Student = mongoose.model("Student", schemas.student)
-const Post = mongoose.model("Post", schemas.post)
-const Faculty = mongoose.model("Faculty", schemas.faculty)
-const Comment=mongoose.model("Comment",schemas.comment)
-const Admins = mongoose.model("Admins", schemas.admins)
+const Student = mongoose.model("Student", schemas.student);
+const Post = mongoose.model("Post", schemas.post);
+const Faculty = mongoose.model("Faculty", schemas.faculty);
+const Comment=mongoose.model("Comment",schemas.comment);
+const Admins = mongoose.model("Admins", schemas.admins);
+const Publications=mongoose.model("Publications", schemas.publications);
+const Workshops=mongoose.model("Workshops", schemas.workshops);
 
 
 
 async function addStudent(body) {
-    const studentExists = await Student.findOne({ "id": body.rollno })
+    const studentExists = await Student.findOne({ "id": body.rollno });
 
 
-    console.log(studentExists)
+    console.log(studentExists);
     if (studentExists == null) {
-        body.password = await bcrypt.hash(body.password, 10)
-        const newStudent = new Student(body)
-        await newStudent.save()
-        return "Student Added"
+        body.password = await bcrypt.hash(body.password, 10);
+        const newStudent = new Student(body);
+        await newStudent.save();
+        return "Student Added";
     }
     else {
-        return "Student already exists"
+        return "Student already exists";
     }
 }
 
 async function addFaculty(body) {
-    const facultyExists = await Faculty.findOne({ "id": body.id })
+    const facultyExists = await Faculty.findOne({ "id": body.id });
 
 
-    console.log(facultyExists)
+    console.log(facultyExists);
     if (facultyExists == null) {
-        body.password = await bcrypt.hash(body.password, 10)
-        const newFaculty = new Faculty(body)
-        await newFaculty.save()
-        return "Faculty Added"
+        body.password = await bcrypt.hash(body.password, 10);
+        const newFaculty = new Faculty(body);
+        await newFaculty.save();
+        return "Faculty Added";
     }
     else {
-        return "Faculty already exists"
+        return "Faculty already exists";
     }
 }
 
+async function addPublication(body){
+    //console.log("Publication Body", body);
+    //console.log(body.issn);
+    const publicationExists=await Publications.findOne({"issn":body.issn});
+
+    console.log(publicationExists);
+    if(publicationExists==null){
+        const newPublications =new Publications(body);
+        console.log(newPublications);
+        await newPublications.save();
+        console.log("Publication Added");
+        return "Publication Added";
+    }
+    else{
+        return "Publication already exists";
+    }
+}
+
+async function addWorkshop(body){
+    console.log("Workshop body", body);
+
+    const newWorkshop=new Workshops(body);
+    await newWorkshop.save();
+    console.log("Workshop Added");
+    return "Workshop Added";
+
+}
+
+
+
 
 async function getStudentByRollNo(rollno) {
-    const student = await Student.findOne({ "id": rollno })
+    const student = await Student.findOne({ "id": rollno });
     if (student == null) {
-        return { "message": "Student doesn't exist" }
+        return { "message": "Student doesn't exist" };
     }
     else {
-        return { "message": "Student Found", "Student_Data": student }
+        return { "message": "Student Found", "Student_Data": student };
     }
 }
 
 
 
 async function addPost(body) {
-    const studentExists = await Student.findOne({ "id": body.postedBy })
+    const studentExists = await Student.findOne({ "id": body.postedBy });
     if (studentExists == null) {
-        return { "message": "Student doesn't exist", "status": 400 }
+        return { "message": "Student doesn't exist", "status": 400 };
     }
-    const newPost = new Post(body)
-    studentExists.posts.push(newPost._id)
-    await newPost.save()
-    studentExists.save()
-    return { "message": "Post created", "status": 201, "post added": newPost }
+    const newPost = new Post(body);
+    studentExists.posts.push(newPost._id);
+    await newPost.save();
+    studentExists.save();
+    return { "message": "Post created", "status": 201, "post added": newPost };
 
 }
 
@@ -167,15 +199,27 @@ async function login2(loginForm) {
 
 
 async function getAllPosts() {
-    const posts = await Post.find()
+    const posts = await Post.find();
 
-    return { "message": "Posts returned", "status": 201, "posts": posts }
+    return { "message": "Posts returned", "status": 201, "posts": posts };
 }
 
 async function getFaculty() {
     const facultyDetails = await Faculty.find();
-    console.log(facultyDetails)
-    return { "message": "Details returned", "status": 201, "details": facultyDetails }
+    //console.log(facultyDetails);
+    return { "message": "Details returned", "status": 201, "details": facultyDetails };
+}
+
+async function getPublication(){
+    const publications=await Publications.find();
+    console.log(publications);
+    return {"message":"Details returned", "status":201, "details":publications};
+}
+
+async function getWorkshop(){
+    const publications=await Workshops.find();
+    console.log(publications);
+    return {"message":"Details returned", "status":201, "details":publications};
 }
 
 async function deleteComment(commentID){
@@ -299,68 +343,72 @@ async function verifyAdmin(data) {
 
 
 async function deleteFaculty(id){
-    const facultyExists = await Faculty.findOne({ "_id": id })
-    console.log(facultyExists)
+    const facultyExists = await Faculty.findOne({ "_id": id });
+    console.log(facultyExists);
     if (facultyExists == null) {
-        return { "message": "Faculty doesn't exist", "status": 400 }
+        return { "message": "Faculty doesn't exist", "status": 400 };
     }
-    await Faculty.deleteOne({"_id":id})
-    return { "message": "Faculty deleted", "status": 201}
+    await Faculty.deleteOne({"_id":id});
+    return { "message": "Faculty deleted", "status": 201};
 }
 
 
 async function getStudentById(id) {
-    const student = await Student.findById(id)
+    const student = await Student.findById(id);
     if (student == null) {
-        return { "message": "Student doesn't exist", "status": 404 }
+        return { "message": "Student doesn't exist", "status": 404 };
     }
     else {
-        return { "message": "Student Found", "Student_Data": student }
+        return { "message": "Student Found", "Student_Data": student };
     }
 }
 
 async function getFacultyByRollNo(facultyID) {
-    const faculty = await Faculty.find({ "id": facultyID })
+    const faculty = await Faculty.find({ "id": facultyID });
 
     if (faculty != null) {
-        return { "message": "Faculty found", "FacultyData": faculty }
+        return { "message": "Faculty found", "FacultyData": faculty };
     }
     else {
-        return { "message": "Faculty not found", "status": 404 }
+        return { "message": "Faculty not found", "status": 404 };
     }
 }
 
 async function updateFaculty(id,body){
-    let facultyExists = await Faculty.findOne({ "_id": id })
-    console.log(facultyExists)
+    let facultyExists = await Faculty.findOne({ "_id": id });
+    console.log(facultyExists);
     if (facultyExists == null) {
-        return { "message": "Faculty doesn't exist", "status": 400 }
+        return { "message": "Faculty doesn't exist", "status": 400 };
     }
-    await Faculty.updateOne({"_id":id},body)
-    return { "message": "Faculty updated", "status": 201}
+    await Faculty.updateOne({"_id":id},body);
+    return { "message": "Faculty updated", "status": 201};
 }
 
 
-module.exports.getStudentById = getStudentById
-module.exports.verifyAdmin=verifyAdmin
-module.exports.addStudent = addStudent
-module.exports.getStudentByRollNo = getStudentByRollNo
-module.exports.addPost = addPost
-module.exports.getPostById = getPostById
-module.exports.getCommentsOnPost = getCommentsOnPost
-module.exports.addComment = addComment
-module.exports.getAllPosts = getAllPosts
-module.exports.login = login
-module.exports.addFaculty = addFaculty
-module.exports.getFaculty = getFaculty
-module.exports.getFacultyById = getFacultyById
-module.exports.deletePost = deletePost
-module.exports.getCommentByID=getCommentByID
-module.exports.deleteComment=deleteComment
-module.exports.addProject = addProject
-module.exports.deleteProject = deleteProject
-module.exports.deleteFaculty=deleteFaculty
-module.exports.updateFaculty=updateFaculty
-module.exports.login2=login2
-module.exports.addPost2=addPost2
-module.exports.getFacultyByRollNo=getFacultyByRollNo
+module.exports.getStudentById = getStudentById;
+module.exports.verifyAdmin=verifyAdmin;
+module.exports.addStudent = addStudent;
+module.exports.getStudentByRollNo = getStudentByRollNo;
+module.exports.addPost = addPost;
+module.exports.getPostById = getPostById;
+module.exports.getCommentsOnPost = getCommentsOnPost;
+module.exports.addComment = addComment;
+module.exports.getAllPosts = getAllPosts;
+module.exports.login = login;
+module.exports.addFaculty = addFaculty;
+module.exports.getFaculty = getFaculty;
+module.exports.getFacultyById = getFacultyById;
+module.exports.deletePost = deletePost;
+module.exports.getCommentByID=getCommentByID;
+module.exports.deleteComment=deleteComment;
+module.exports.addProject = addProject;
+module.exports.deleteProject = deleteProject;
+module.exports.deleteFaculty=deleteFaculty;
+module.exports.updateFaculty=updateFaculty;
+module.exports.login2=login2;
+module.exports.addPost2=addPost2;
+module.exports.getFacultyByRollNo=getFacultyByRollNo;
+module.exports.addPublication=addPublication;
+module.exports.addWorkshop=addWorkshop;
+module.exports.getPublication=getPublication;
+module.exports.getWorkshop=getWorkshop;
