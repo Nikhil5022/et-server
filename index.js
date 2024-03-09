@@ -151,6 +151,18 @@ app.get("/getCommentByID/:commentID", (req, res) => {
     });
 });
 
+app.get("/getAllBugs", (req, res) => {
+    queries.getAllBugs().then(response => {
+        res.send(response)
+    })
+})
+
+app.get("/getAllEvents", (req, res) => {
+    queries.getAllEvents().then(response => {
+        res.send(response)
+    })
+})
+
 //POST Methods
 app.post('/updateFaculty/:facultyID', (req, res) => {
     facultyID = req.params.facultyID;
@@ -230,6 +242,13 @@ app.post('/login',(req,res)=>{
     });
 });
 
+app.post('/addEvent', (req, res) => {
+    const eventData = req.body
+    queries.addEvent(eventData).then(response => {
+        res.send(response)
+    })
+})
+
 
 
 //PUT Methods
@@ -261,6 +280,34 @@ app.put("/addProject/:studentID", async (req, res) => {
     });
 
 });
+
+app.post('/addAttandance', (req, res) => {
+    const attendance = req.body
+    queries.attendance(attendance).then(response => {
+        res.send(response)
+    })
+})
+
+app.post('/reportBug', (req, res) => {
+    const bug = req.body
+    queries.reportBug(bug).then(response => {
+        res.send(response)
+    })
+})
+
+app.put('/resolveBug/:id', (req, res) => {
+    const id = req.params.id
+    queries.resolveBug(id).then(response => {
+        res.send(response)
+    })
+})
+
+app.put('/unresolveBug/:id', (req, res) => {
+    const id = req.params.id
+    queries.undoResolvedErrors(id).then(response => {
+        res.send(response)
+    })
+})
 
 
 //DELETE Methods
@@ -312,6 +359,13 @@ app.put('/updateFaculty/:facultyID', (req, res) => {
         res.send(response);
     });
 });
+
+app.delete('/deleteEvent/:eventID', (req, res) => {
+    eventID = req.params.eventID
+    queries.deleteEvent(eventID).then(response => {
+        res.send(response)
+    })
+})
 
 app.listen(port, () => {
     console.log('listening at port ' + port);

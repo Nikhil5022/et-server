@@ -39,6 +39,10 @@ const student = new mongoose.Schema({
     roles: {
         type: Array,
         default: ["student"]
+    },
+    attendance: {
+        type:Array,
+        default:[]
     }
 });
 
@@ -68,78 +72,7 @@ const post = new mongoose.Schema({
         default: ["student"]
     }
 
-});
-
-const publications=new mongoose.Schema({
-    faculty_id:{
-        type:String,
-        required:true
-    },
-    facultyName:{
-        type:String,
-        required:true
-    },
-    issn:{
-        type:String,
-        required:true
-    },
-    title:{
-        type:String,
-        required:true
-    },
-    journal:{
-        type:String,
-        required:true
-    },
-    
-    indexing:{
-        type:String,
-        required:true
-    },
-    year_of_publication:{
-        type:Date,
-        required:true
-    },
-    citation:{
-        type:String,
-        required:true
-    }
-});
-
-const workshops=new mongoose.Schema({
-    faculty_id:{
-        type:String,
-        required:true
-    },
-    facultyName:{
-        type:String,
-        required:true
-    },
-    title:{
-        type:String, 
-        required:true
-    },
-    startDate:{
-        type:Date,
-        required:true
-    },
-    endDate:{
-        type:Date,
-        required:true
-    },
-    organizedBy:{
-        type:String,
-        required:true
-    },
-    scope:{
-        type:String,
-        required:true
-    },
-    type:{
-        type:String,
-        required:true
-    }
-});
+})
 
 const faculty = new mongoose.Schema({
     id:{
@@ -242,7 +175,7 @@ const admins = new mongoose.Schema({
         type: String,
         required: true
     },
-});
+})
 
 
 module.exports = mongoose.model('Student', student);
@@ -250,5 +183,3 @@ module.exports = mongoose.model('Post', post);
 module.exports = mongoose.model('Faculty', faculty);
 module.exports = mongoose.model('Comment', comment);
 module.exports = mongoose.model('Admins', admins);
-module.exports = mongoose.model('Publications', publications);
-module.exports = mongoose.model('Workshops', workshops);
