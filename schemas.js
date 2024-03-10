@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const student = new mongoose.Schema({
     id: {
@@ -44,7 +44,7 @@ const student = new mongoose.Schema({
         type:Array,
         default:[]
     }
-})
+});
 
 const post = new mongoose.Schema({
     title: {
@@ -71,7 +71,8 @@ const post = new mongoose.Schema({
         type: Array,
         default: ["student"]
     }
-})
+
+});
 
 const faculty = new mongoose.Schema({
     id:{
@@ -110,6 +111,10 @@ const faculty = new mongoose.Schema({
         type:Array,
         default:[]
     },
+    workshops:{
+        type:Array,
+        default:[]
+    },
     posts:{
         type:Array,
         default:[]
@@ -142,7 +147,9 @@ const faculty = new mongoose.Schema({
         type:Number,
         default:0
     }
-})      
+});
+
+
 
 const comment = new mongoose.Schema({
     content: {
@@ -157,7 +164,78 @@ const comment = new mongoose.Schema({
         type: String,
         required: true
     }
-})
+});
+
+const publications=new mongoose.Schema({
+    faculty_id:{
+        type:String,
+        required:true
+    },
+    facultyName:{
+        type:String,
+        required:true
+    },
+    issn:{
+        type:String, 
+        required:true
+    },
+    title:{
+        type:String,
+        required:true
+    },
+    journal:{
+        type:String,
+        required:true
+    },
+    indexing:{
+        type:String,
+        required:true
+    },
+    year_of_publication:{
+        type:String,
+        required:true
+    },
+    citation:{
+        type:String,
+        required:true
+    }
+});
+
+
+const workshops=new mongoose.Schema({
+    faculty_id:{
+        type:String,
+        required:true
+    },
+    facultyName:{
+        type:String,
+        required:true
+    },
+    title:{
+        type:String,
+        required:true
+    },
+    startDate:{
+        type:Date,
+        required:true
+    },
+    endDate:{
+        type:Date,
+        required:true
+    },
+    organizedBy:{
+        type:String,
+        required:true
+    },
+    scope:{
+        type:String,
+        required:true
+    },
+    type:{
+        type:String,
+        required:true
+    },
+});
 
 const admins = new mongoose.Schema({
     email: {
@@ -168,7 +246,7 @@ const admins = new mongoose.Schema({
         type: String,
         required: true
     },
-})
+});
 
 const bugs= new mongoose.Schema({
     bug:{
@@ -186,9 +264,8 @@ const bugs= new mongoose.Schema({
     resolved:{
         type:Boolean,
         default:false
-    }
-})
-
+    }
+});
 
 const events = new mongoose.Schema({
     title: {
@@ -222,10 +299,10 @@ const events = new mongoose.Schema({
     },
     resourcePersons: {
         type: Array,
-        default: []
-    }
+        default: []
+    }
 
-})
+});
 
 
 
@@ -236,3 +313,5 @@ module.exports = mongoose.model('Comment', comment);
 module.exports = mongoose.model('Admins', admins);
 module.exports = mongoose.model('Bugs', bugs);
 module.exports = mongoose.model('Events', events);
+module.exports=mongoose.model('Publications', publications);
+module.exports=mongoose.model('Workshops', workshops);
