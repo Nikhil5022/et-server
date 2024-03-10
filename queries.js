@@ -6,11 +6,7 @@ const jwt = require('jsonwebtoken');
 
 mongoose.set("strictQuery", false);
 
-const Student = mongoose.model("Student", schemas.student)
-const Post = mongoose.model("Post", schemas.post)
-const Faculty = mongoose.model("Faculty", schemas.faculty)
-const Comment = mongoose.model("Comment", schemas.comment)
-const Admins = mongoose.model("Admins", schemas.admins)
+
 const Bugs = mongoose.model("Bugs", schemas.bugs)
 const Events = mongoose.model("Events", schemas.Events)
 const Student = mongoose.model("Student", schemas.student);
@@ -363,6 +359,7 @@ async function deleteFaculty(id){
     await Faculty.deleteOne({"_id":id});
     return { "message": "Faculty deleted", "status": 201};
 }
+}
 
 
 async function getStudentById(id) {
@@ -399,6 +396,7 @@ async function updateFaculty(id,body){
     return { "message": "Faculty updated", "status": 201 }
     await Faculty.updateOne({"_id":id},body);
     return { "message": "Faculty updated", "status": 201};
+}
 }
 
 
