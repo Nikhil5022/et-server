@@ -12,10 +12,10 @@ const Events = mongoose.model("Events", schemas.Events)
 const Student = mongoose.model("Student", schemas.student);
 const Post = mongoose.model("Post", schemas.post);
 const Faculty = mongoose.model("Faculty", schemas.faculty);
-const Comment=mongoose.model("Comment",schemas.comment);
+const Comment = mongoose.model("Comment", schemas.comment);
 const Admins = mongoose.model("Admins", schemas.admins);
-const Publications=mongoose.model("Publications", schemas.publications);
-const Workshops=mongoose.model("Workshops", schemas.workshops);
+const Publications = mongoose.model("Publications", schemas.publications);
+const Workshops = mongoose.model("Workshops", schemas.workshops);
 
 
 
@@ -51,29 +51,42 @@ async function addFaculty(body) {
     }
 }
 
-async function addPublication(body){
-    //console.log("Publication Body", body);
-    //console.log(body.issn);
-    const publicationExists=await Publications.findOne({"issn":body.issn});
+async function addPublication(body) {
+    const publicationExists = await Publications.findOne({ "issn": body.issn });
 
     console.log(publicationExists);
-    if(publicationExists==null){
-        const newPublications =new Publications(body);
-        console.log(newPublications);
+    if (publicationExists == null) {
+
+        const faculty = await Faculty.findOne({ "id": body.faculty_id });
+
+        if (faculty == null) {
+            return "Faculty doesn't exist";
+        }
+
+        const newPublications = new Publications(body);
         await newPublications.save();
-        console.log("Publication Added");
+        faculty.publications.push(newPublications._id);
+        await faculty.save();
         return "Publication Added";
     }
-    else{
+    else {
         return "Publication already exists";
     }
 }
 
-async function addWorkshop(body){
+async function addWorkshop(body) {
     console.log("Workshop body", body);
 
-    const newWorkshop=new Workshops(body);
+    const faculty = await Faculty.findOne({ "id": body.faculty_id });
+
+    if (faculty == null) {
+        return "Faculty doesn't exist";
+    }
+
+    const newWorkshop = new Workshops(body);
     await newWorkshop.save();
+    faculty.workshops.push(newWorkshop._id);
+    await faculty.save();
     console.log("Workshop Added");
     return "Workshop Added";
 
@@ -213,32 +226,32 @@ async function getFaculty() {
     return { "message": "Details returned", "status": 201, "details": facultyDetails };
 }
 
-async function getPublication(){
-    const publications=await Publications.find();
+async function getPublication() {
+    const publications = await Publications.find();
     console.log(publications);
-    return {"message":"Details returned", "status":201, "details":publications};
+    return { "message": "Details returned", "status": 201, "details": publications };
 }
 
-async function getWorkshop(){
-    const publications=await Workshops.find();
+async function getWorkshop() {
+    const publications = await Workshops.find();
     console.log(publications);
-    return {"message":"Details returned", "status":201, "details":publications};
+    return { "message": "Details returned", "status": 201, "details": publications };
 }
 
-async function deleteComment(commentID){
-    
+async function deleteComment(commentID) {
+
     const comment = await Comment.findById(commentID)
-    if(comment==null){
-        return {"message":"Comment doesn't exist","status":404}
+    if (comment == null) {
+        return { "message": "Comment doesn't exist", "status": 404 }
     }
 
-    const student=await Student.findOne({"id":comment.commentedBy})
-    const post=await Post.findById(comment.commentedOn)
+    const student = await Student.findOne({ "id": comment.commentedBy })
+    const post = await Post.findById(comment.commentedOn)
 
-    index=student.comments.indexOf(commentID)
-    await student.comments.splice(index,1)
-    index=post.comments.indexOf(commentID)
-    await post.comments.splice(index,1)
+    index = student.comments.indexOf(commentID)
+    await student.comments.splice(index, 1)
+    index = post.comments.indexOf(commentID)
+    await post.comments.splice(index, 1)
 
     await student.save()
     await post.save()
@@ -263,8 +276,8 @@ async function deletePost(postID) {
         const index = user.posts.indexOf(postID);
         user.posts.splice(index, 1);
         await user.save()
-        
-        for(let i=0;i<post.comments.length;i++){
+
+        for (let i = 0; i < post.comments.length; i++) {
             await deleteComment(post.comments[i])
         }
 
@@ -348,17 +361,17 @@ async function verifyAdmin(data) {
 async function deleteFaculty(id) {
     const facultyExists = await Faculty.findOne({ "_id": id })
     console.log(facultyExists)
-async function deleteFaculty(id){
-    const facultyExists = await Faculty.findOne({ "_id": id });
-    console.log(facultyExists);
-    if (facultyExists == null) {
-        return { "message": "Faculty doesn't exist", "status": 400 };
+    async function deleteFaculty(id) {
+        const facultyExists = await Faculty.findOne({ "_id": id });
+        console.log(facultyExists);
+        if (facultyExists == null) {
+            return { "message": "Faculty doesn't exist", "status": 400 };
+        }
+        await Faculty.deleteOne({ "_id": id })
+        return { "message": "Faculty deleted", "status": 201 }
+        await Faculty.deleteOne({ "_id": id });
+        return { "message": "Faculty deleted", "status": 201 };
     }
-    await Faculty.deleteOne({ "_id": id })
-    return { "message": "Faculty deleted", "status": 201 }
-    await Faculty.deleteOne({"_id":id});
-    return { "message": "Faculty deleted", "status": 201};
-}
 }
 
 
@@ -386,17 +399,17 @@ async function getFacultyByRollNo(facultyID) {
 async function updateFaculty(id, body) {
     let facultyExists = await Faculty.findOne({ "_id": id })
     console.log(facultyExists)
-async function updateFaculty(id,body){
-    let facultyExists = await Faculty.findOne({ "_id": id });
-    console.log(facultyExists);
-    if (facultyExists == null) {
-        return { "message": "Faculty doesn't exist", "status": 400 };
+    async function updateFaculty(id, body) {
+        let facultyExists = await Faculty.findOne({ "_id": id });
+        console.log(facultyExists);
+        if (facultyExists == null) {
+            return { "message": "Faculty doesn't exist", "status": 400 };
+        }
+        await Faculty.updateOne({ "_id": id }, body)
+        return { "message": "Faculty updated", "status": 201 }
+        await Faculty.updateOne({ "_id": id }, body);
+        return { "message": "Faculty updated", "status": 201 };
     }
-    await Faculty.updateOne({ "_id": id }, body)
-    return { "message": "Faculty updated", "status": 201 }
-    await Faculty.updateOne({"_id":id},body);
-    return { "message": "Faculty updated", "status": 201};
-}
 }
 
 
@@ -430,22 +443,22 @@ async function attendance(body) {
 async function reportBug(body) {
     console.log(body)
     let id = await Student.findOne({ "id": body.id });
-    if(id==null){
+    if (id == null) {
         return { "message": "Student doesn't exist", "status": 400 }
     }
-    else{
-        const bug=new Bugs(body)
+    else {
+        const bug = new Bugs(body)
         await bug.save()
         return { "message": "Bug reported", "status": 201 }
     }
 }
 
-async function getAllBugs(){
+async function getAllBugs() {
     const bugs = await Bugs.find()
     return { "message": "Bugs returned", "status": 201, "bugs": bugs }
 }
 
-async function resolveBug(id){
+async function resolveBug(id) {
     const bug = await Bugs.findOne({
         "_id": id
     })
@@ -465,12 +478,12 @@ async function addEvent(body) {
     return { "message": "Event Added", "status": 201 }
 }
 
-async function getAllEvents(){
+async function getAllEvents() {
     const events = await Events.find()
     return { "message": "Events returned", "status": 201, "events": events }
 }
 
-async function deleteEvent(id){
+async function deleteEvent(id) {
     const event = await Events.findOne({
         "_id": id
     })
@@ -483,7 +496,7 @@ async function deleteEvent(id){
     }
 }
 
-async function undoResolvedErrors(id){
+async function undoResolvedErrors(id) {
     const bug = await Bugs.findOne({
         "_id": id
     })
@@ -532,7 +545,7 @@ module.exports.getAllEvents = getAllEvents
 module.exports.deleteEvent = deleteEvent
 module.exports.undoResolvedErrors = undoResolvedErrors
 module.exports.getStudentById = getStudentById;
-module.exports.verifyAdmin=verifyAdmin;
+module.exports.verifyAdmin = verifyAdmin;
 module.exports.addStudent = addStudent;
 module.exports.getStudentByRollNo = getStudentByRollNo;
 module.exports.addPost = addPost;
@@ -545,16 +558,16 @@ module.exports.addFaculty = addFaculty;
 module.exports.getFaculty = getFaculty;
 module.exports.getFacultyById = getFacultyById;
 module.exports.deletePost = deletePost;
-module.exports.getCommentByID=getCommentByID;
-module.exports.deleteComment=deleteComment;
+module.exports.getCommentByID = getCommentByID;
+module.exports.deleteComment = deleteComment;
 module.exports.addProject = addProject;
 module.exports.deleteProject = deleteProject;
-module.exports.deleteFaculty=deleteFaculty;
-module.exports.updateFaculty=updateFaculty;
-module.exports.login2=login2;
-module.exports.addPost2=addPost2;
-module.exports.getFacultyByRollNo=getFacultyByRollNo;
-module.exports.addPublication=addPublication;
-module.exports.addWorkshop=addWorkshop;
-module.exports.getPublication=getPublication;
-module.exports.getWorkshop=getWorkshop;
+module.exports.deleteFaculty = deleteFaculty;
+module.exports.updateFaculty = updateFaculty;
+module.exports.login2 = login2;
+module.exports.addPost2 = addPost2;
+module.exports.getFacultyByRollNo = getFacultyByRollNo;
+module.exports.addPublication = addPublication;
+module.exports.addWorkshop = addWorkshop;
+module.exports.getPublication = getPublication;
+module.exports.getWorkshop = getWorkshop;
