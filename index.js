@@ -281,7 +281,7 @@ app.put("/addProject/:studentID", async (req, res) => {
 
 });
 
-app.post('/addAttandance', (req, res) => {
+app.post('/addAttendance', (req, res) => {
     const attendance = req.body
     queries.attendance(attendance).then(response => {
         res.send(response)
@@ -366,6 +366,13 @@ app.delete('/deleteEvent/:eventID', (req, res) => {
         res.send(response)
     })
 })
+
+app.delete('/deleteBug/:id', (req, res) => {
+    const id = req.params.id
+    queries.deleteBug(id).then(response => {
+        res.send(response)
+    })
+}) 
 
 app.listen(port, () => {
     console.log('listening at port ' + port);

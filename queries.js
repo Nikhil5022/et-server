@@ -510,6 +510,18 @@ async function undoResolvedErrors(id) {
     }
 }
 
+async function deleteBug(id) {
+    const bug = await Bugs.findOne({
+        "_id": id
+    })
+    if (bug == null) {
+        return { "message": "Bug doesn't exist", "status": 404 }
+    }
+    else {
+        await Bugs.deleteOne({ "_id": id })
+        return { "message": "Bug deleted", "status": 201 }
+    }
+}
 
 
 
@@ -571,3 +583,5 @@ module.exports.addPublication = addPublication;
 module.exports.addWorkshop = addWorkshop;
 module.exports.getPublication = getPublication;
 module.exports.getWorkshop = getWorkshop;
+module.exports.deleteFaculty = deleteFaculty;
+module.exports.deleteBug = deleteBug;
