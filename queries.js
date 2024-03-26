@@ -157,13 +157,24 @@ async function addComment(postID, commentBody) {
 }
 
 async function getPostById(postID) {
-    const post = await Post.findById(postID)
-    console.log(post)
+    const post = await Post.findById(postID);
+    console.log(post);
     if (post == null) {
-        return { "message": "Post doesn't exist", "status": 404 }
+        return { "message": "Post doesn't exist", "status": 404 };
     }
     else {
-        return { "message": "Post found", "status": 201, "post": post }
+        return { "message": "Post found", "status": 201, "post": post };
+    }
+}
+
+async function getPublicationByID(id){
+    const publication =await Publications.findById(id);
+    console.log("Publication", publication);
+    if(publication==null){
+        return {"message" :"publication doesn't exist", "status" : 404};
+    }
+    else{
+        return {"message":"Publication found", "Status":201, "publication":publication};
     }
 }
 
@@ -296,7 +307,7 @@ async function getFacultyById(facultyID) {
     const faculty = await Faculty.findById(facultyID)
 
     if (faculty != null) {
-        return { "message": "Faculty found", "Faculty Data": faculty }
+        return { "message": "Faculty found", "Faculty Data": faculty };
     }
     else {
         return { "message": "Faculty not found", "status": 404 }
@@ -585,3 +596,4 @@ module.exports.getPublication = getPublication;
 module.exports.getWorkshop = getWorkshop;
 module.exports.deleteFaculty = deleteFaculty;
 module.exports.deleteBug = deleteBug;
+module.exports.getPublicationByID=getPublicationByID;

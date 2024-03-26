@@ -129,6 +129,13 @@ app.get("/getFacultyByRollNo/:rollno", (req, res) => {
     });
 });
 
+app.get("/getPublicationByID/:id", (req, res)=>{
+    id=req.params.id;
+    queries.getPublicationByID(id).then(response=>{
+        res.status(200).send(response);
+    });
+});
+
 
 
 
