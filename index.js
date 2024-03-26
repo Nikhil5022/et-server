@@ -253,8 +253,12 @@ app.post('/addEvent', (req, res) => {
 
 //PUT Methods
 app.post('/addComment/:postID', (req, res) => {
-    postID = req.params.postID;
-    comment = req.body;
+    const postID = req.params.postID;
+    const comment = req.body;
+
+    // Assuming 'postedBy' is a string representing the student's ObjectId
+    // If it's not already an ObjectId, you need to convert it before passing it to addComment
+    comment.postedBy = mongoose.Types.ObjectId(comment.postedBy);
 
     queries.addComment(postID, comment).then(response => {
         if (response.status) {
@@ -264,9 +268,10 @@ app.post('/addComment/:postID', (req, res) => {
         }
     }).catch(error => {
         console.error(error);
-        res.send(response);
+        res.status(500).send({ error: 'Internal Server Error' });
     });
 });
+
 
 app.put("/addProject/:studentID", async (req, res) => {
     const studentID = req.params.studentID;
